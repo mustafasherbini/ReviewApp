@@ -9,7 +9,6 @@ using System.Resources;
 
 namespace ReviewApp.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {

@@ -85,7 +85,6 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpPut()]
 
         public IActionResult UpdateProduct(int ProductId, [FromBody] ProductDTO upProduct)
         {

@@ -105,7 +105,8 @@ namespace ReviewApp.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
+        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
         public IActionResult DeleteCountry(int id)
         {
 
