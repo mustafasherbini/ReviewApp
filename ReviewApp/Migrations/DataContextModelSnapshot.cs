@@ -205,7 +205,7 @@ namespace ReviewApp.Migrations
             modelBuilder.Entity("ReviewApp.Models.ProductCategory", b =>
                 {
                     b.HasOne("ReviewApp.Models.Category", "Category")
-                        .WithMany("PokemonCategories")
+                        .WithMany("ProducCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -261,7 +261,7 @@ namespace ReviewApp.Migrations
 
             modelBuilder.Entity("ReviewApp.Models.Category", b =>
                 {
-                    b.Navigation("PokemonCategories");
+                    b.Navigation("ProducCategories");
                 });
 
             modelBuilder.Entity("ReviewApp.Models.Country", b =>

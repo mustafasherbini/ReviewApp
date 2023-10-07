@@ -43,7 +43,7 @@ namespace ReviewApp.Repository
         }
 
 
-        public bool ReviewExists(int id)
+        public bool ReviewExists(int? id)
         {
             return _Context.Reviews.Any(R=>R.Id==id);
         }

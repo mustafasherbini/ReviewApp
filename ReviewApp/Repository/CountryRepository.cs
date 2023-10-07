@@ -11,7 +11,7 @@ namespace ReviewApp.Repository
             _context = context;
             
         }
-        public bool CountryExist(int CountryId)
+        public bool CountryExist(int? CountryId)
         {
             return _context.Countries.Any(country => country.Id == CountryId);
         }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReviewApp;
 using ReviewApp.Data;
+using ReviewApp.Filters;
 using ReviewApp.Helper;
 using ReviewApp.Repository;
 
@@ -14,11 +15,14 @@ builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IReviewerRepository, ReviewerRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<Seed>();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 builder.Services.AddDbContext<DataContext>(
     options =>
     {
@@ -26,6 +30,8 @@ builder.Services.AddDbContext<DataContext>(
     }
 
     );
+
+
 
 var app = builder.Build();
 

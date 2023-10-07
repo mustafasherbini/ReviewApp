@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewApp.DTO;
+using ReviewApp.Filters.IActionFilters;
 using ReviewApp.Models;
-using ReviewApp.Repository;
 
 namespace ReviewApp.Controllers
 {
@@ -16,52 +15,52 @@ namespace ReviewApp.Controllers
         private readonly IMapper _mapper;
         IProductRepository _productRepository;
         IReviewerRepository _reviewerRepository;
-        public ReviewController(IReviewRepository reviewRepository, IMapper mapper , IProductRepository productRepository , IReviewerRepository reviewerRepository)
+        public ReviewController(IReviewRepository reviewRepository, IMapper mapper, IProductRepository productRepository, IReviewerRepository reviewerRepository)
         {
             _reviewRepository = reviewRepository;
             _mapper = mapper;
             _productRepository = productRepository;
             _reviewerRepository = reviewerRepository;
-           
+
         }
-        [HttpGet("Reviews")]
+        [HttpGet("All")]
         public IActionResult GetReviews()
         {
             var reviews = _mapper.Map<List<ReviewDTO>>(_reviewRepository.GetReviews());
             return Ok(reviews);
         }
 
-        [HttpGet("GetReview")]
-        public IActionResult GetReview(int ID)
+
+        [HttpGet("{id}")]
+        [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
+        public IActionResult GetReview(int id)
         {
-            var review = _reviewRepository.GetReview(ID);
+            var review = _reviewRepository.GetReview(id);
             var reviewDTO = _mapper.Map<ReviewDTO>(review);
             return Ok(reviewDTO);
         }
+        
 
-        [HttpGet("ReviewExist")]
-        public IActionResult ReviewExist(int ID)
+
+        [HttpGet("exists/{id}")]
+        [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
+
+        public IActionResult ReviewExist(int id)
         {
-            var exists = _reviewRepository.ReviewExists(ID);
+            var exists = _reviewRepository.ReviewExists(id);
             return Ok(exists);
         }
 
-        [HttpGet("GetReviewsOfAProduct")]
-        public IActionResult GetReviewsOfAPokemon(int ID)
-        {
-            var ProductReviews = _reviewRepository.GetReviewsOfAProduct(ID);
 
-            if (ProductReviews == null)
-            {
-                return NotFound(); // Return a 404 Not Found response if the Pokémon is not found.
-            }
+
+        [HttpGet("{id}/product")]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
+
+        public IActionResult GetReviewsOfAProduct(int id)
+        {
+            var ProductReviews = _reviewRepository.GetReviewsOfAProduct(id);
 
             var reviewsDTO = _mapper.Map<List<ReviewDTO>>(ProductReviews);
-
-            if (!reviewsDTO.Any())
-            {
-                return NoContent(); // Return a 204 No Content response if the reviews collection is empty.
-            }
 
             return Ok(reviewsDTO);
         }
@@ -71,12 +70,12 @@ namespace ReviewApp.Controllers
         {
             if (ReviewCreate == null) { return BadRequest(); }
 
-          
+
             var ReviewMap = _mapper.Map<Review>(ReviewCreate);
             ReviewMap.Reviewer = _reviewerRepository.GetReviewerById(reviwerID);
             ReviewMap.Product = _productRepository.GetProduct(ProductID);
-           
-            if (!_reviewRepository.CreateReview(ReviewMap,ProductID, reviwerID))
+
+            if (!_reviewRepository.CreateReview(ReviewMap, ProductID, reviwerID))
             {
 
                 ModelState.AddModelError("", "Something went wrong while saving");
@@ -87,12 +86,11 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpPut()]
-
-        public IActionResult UpdateReview(int ReviewId, [FromBody] ReviewDTO upReview)
+        [HttpPut("{id}")]
+        public IActionResult UpdateReview(int id, [FromBody] ReviewDTO upReview)
         {
             if (upReview == null) { return BadRequest(ModelState); }
-            if (ReviewId != upReview.Id) return BadRequest(ModelState);
+            if (id != upReview.Id) return BadRequest(ModelState);
             if (!_reviewRepository.ReviewExists(upReview.Id)) return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
@@ -108,11 +106,12 @@ namespace ReviewApp.Controllers
 
         }
 
-        [HttpDelete]
+
+        [HttpDelete("{id}")]
+        [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
+
         public IActionResult DeleteReview(int id)
         {
-
-            if (!_reviewRepository.ReviewExists(id)) return NotFound();
 
             var ReviewToDelete = _reviewRepository.GetReview(id);
             _reviewRepository.DeleteReview(ReviewToDelete);

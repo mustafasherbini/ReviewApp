@@ -35,7 +35,7 @@ _context.Add(category);
             return Save();
         }
 
-        public bool DoesCategoryExist(int categoryId)
+        public bool DoesCategoryExist(int? categoryId)
         {
             return _context.Categories.Any(c => c.Id == categoryId);
         }

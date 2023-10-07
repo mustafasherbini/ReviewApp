@@ -55,7 +55,7 @@ namespace ReviewApp.Repository
 
         }
 
-        public bool OwnerExist(int ownerId)
+        public bool OwnerExist(int? ownerId)
         {
             return _Context.Owners.Any(o => o.Id == ownerId);
         }

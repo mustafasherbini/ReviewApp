@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewApp.Data;
 using ReviewApp.DTO;
+using ReviewApp.Filters.IActionFilters;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 using System.Collections.Generic;
@@ -22,7 +23,8 @@ namespace ReviewApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("countries")]
+
+        [HttpGet("All")]
         public IActionResult GetCountries()
         {
             var countries = _countryRepository.GetAll();
@@ -30,7 +32,10 @@ namespace ReviewApp.Controllers
             return Ok(countryDTOs);
         }
 
-        [HttpGet("countries/{id}")]
+
+        [HttpGet("{id}")]
+        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
+
         public IActionResult GetCountry(int id)
         {
             var country = _countryRepository.GetCountry(id);
@@ -38,14 +43,16 @@ namespace ReviewApp.Controllers
             return Ok(countryDTO);
         }
 
-        [HttpGet("countries/exists/{id}")]
+        [HttpGet("exists/{id}")]
+        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
         public IActionResult CheckCountryExistence(int id)
         {
             var exists = _countryRepository.CountryExist(id);
             return Ok(exists);
         }
 
-        [HttpGet("countries/by-owner/{id}")]
+
+        [HttpGet("owner/{id}")]
         public IActionResult GetCountryByOwner(int id)
         {
             var country = _countryRepository.GetCountryByOwner(id);
@@ -53,13 +60,16 @@ namespace ReviewApp.Controllers
             return Ok(countryDTO);
         }
 
-        [HttpGet("countries/{id}/owners")]
+
+        [HttpGet("{id}/owners")]
+        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
         public IActionResult GetOwnersByCountry(int id)
         {
             var owners = _countryRepository.GetOwnersByCountry(id);
             var ownerDTOs = _mapper.Map<List<OwnerDTO>>(owners);
             return Ok(ownerDTOs);
         }
+
 
         [HttpPost]
         public IActionResult CreateCountry([FromBody] CountryDTO CountryCreate)
@@ -84,12 +94,12 @@ namespace ReviewApp.Controllers
             return Ok("Successfully Created");
         }
 
-        [HttpPut()]
+        [HttpPut("{id}")]
 
-        public IActionResult UpdateCountry(int CountryId, [FromBody] CountryDTO upcountry)
+        public IActionResult UpdateCountry(int id, [FromBody] CountryDTO upcountry)
         {
             if (upcountry == null) { return BadRequest(ModelState); }
-            if (CountryId != upcountry.Id) return BadRequest(ModelState);
+            if (id != upcountry.Id) return BadRequest(ModelState);
             if (!_countryRepository.CountryExist(upcountry.Id)) return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
@@ -110,7 +120,6 @@ namespace ReviewApp.Controllers
         public IActionResult DeleteCountry(int id)
         {
 
-            if (!_countryRepository.CountryExist(id)) return NotFound();
 
             var CountryToDelete = _countryRepository.GetCountry(id);
             _countryRepository.DeleteCountry(CountryToDelete);

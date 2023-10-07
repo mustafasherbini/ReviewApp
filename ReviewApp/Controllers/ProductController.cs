@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewApp.DTO;
+using ReviewApp.Filters.IActionFilters;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 using System.Collections.Generic;
@@ -22,14 +23,18 @@ namespace ReviewApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("Products")]
+        [HttpGet("All")]
         public async Task<IActionResult> GetProducts()
         {
             var products = _mapper.Map<List<ProductDTO>>(_productRepository.GetProduct());
             return Ok(products);
         }
 
-        [HttpGet("Product/{id}")]
+
+
+
+        [HttpGet("{id}")]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         public IActionResult GetProduct(int id)
         {
             var product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(id));
@@ -37,7 +42,9 @@ namespace ReviewApp.Controllers
             return Ok(product);
         }
 
-        [HttpGet("product")]
+
+
+        [HttpGet("ByName/{name}")]
         public IActionResult GetProductByName([FromQuery] string name)
         {
             var product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(name));
@@ -45,21 +52,32 @@ namespace ReviewApp.Controllers
             return Ok(product);
         }
 
-        [HttpGet("product/{id}/rating")]
+
+
+
+
+        [HttpGet("{id}/rating")]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         public IActionResult GetProductRating(int id)
         {
-            var productExists = _productRepository.ProductExist(id);
-            if (!productExists) return NotFound();
+   
             return Ok(_productRepository.GetProductRating(id));
         }
 
-        [HttpGet("product/{id}/exists")]
+
+
+
+
+        [HttpGet("{id}/exists")]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         public IActionResult ProductExist(int id)
         {
             return Ok(_productRepository.ProductExist(id));
         }
 
-        [HttpPost]
+
+
+        [HttpPost()]
         public IActionResult CreateProduct([FromBody] ProductDTO ProductCreate ,[FromQuery] int ownerID ,[FromQuery] int CategoryID)
         {
             if (ProductCreate == null) { return BadRequest(); }
@@ -86,10 +104,11 @@ namespace ReviewApp.Controllers
 
 
 
-        public IActionResult UpdateProduct(int ProductId, [FromBody] ProductDTO upProduct)
+        [HttpPut("{id}")]
+        public IActionResult UpdateProduct(int id, [FromBody] ProductDTO upProduct)
         {
             if (upProduct == null) { return BadRequest(ModelState); }
-            if (ProductId != upProduct.Id) return BadRequest(ModelState);
+            if (id != upProduct.Id) return BadRequest(ModelState);
             if (!_productRepository.ProductExist(upProduct.Id)) return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
@@ -105,15 +124,14 @@ namespace ReviewApp.Controllers
 
         }
 
-        [HttpDelete]
+
+
+        [HttpDelete("{id}")]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         public IActionResult DeleteProduct(int id)
         {
-
-            if (!_productRepository.ProductExist(id)) return NotFound();
-
             var ProductToDelete = _productRepository.GetProduct(id);
             _productRepository.DeleteProduct(ProductToDelete);
-
             return Ok();
         }
     }

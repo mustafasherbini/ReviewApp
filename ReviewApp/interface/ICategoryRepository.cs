@@ -16,7 +16,7 @@ namespace ReviewApp
         IEnumerable<Product> GetProductByCategoryId(int categoryId);
 
         // Check if a category with a given ID exists.
-        bool DoesCategoryExist(int categoryId);
+        bool DoesCategoryExist(int? categoryId);
         bool CreateCategory(Category category);
         bool UpdateCategory(Category category);
         bool DeleteCategory(Category category);

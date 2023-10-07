@@ -45,7 +45,7 @@ namespace ReviewApp.Repository
         }
 
 
-        public bool ReviewerExist(int ReviewerId)
+        public bool ReviewerExist(int? ReviewerId)
         {
          return _context.Reviewers.Any(R=>R.Id == ReviewerId);   
         }

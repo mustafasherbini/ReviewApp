@@ -73,7 +73,7 @@ namespace ReviewApp.Repository
 
        
 
-        public bool ProductExist(int id)
+        public bool ProductExist(int? id)
         {
             return _context.Product.Any(x => x.Id == id);
 

@@ -29,7 +29,7 @@ namespace ReviewApp.Data
 
             modelBuilder.Entity<ProductCategory>()
                     .HasOne(p => p.Category)
-                    .WithMany(pc => pc.PokemonCategories)
+                    .WithMany(pc => pc.ProducCategories)
                     .HasForeignKey(c => c.CategoryId);
 
             modelBuilder.Entity<ProductOwner>()

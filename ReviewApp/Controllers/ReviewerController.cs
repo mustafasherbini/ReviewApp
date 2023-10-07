@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewApp.DTO;
+using ReviewApp.Filters.IActionFilters;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 using System.Collections.Generic;
@@ -21,14 +22,15 @@ namespace ReviewApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("reviewers")]
+        [HttpGet("All")]
         public IActionResult GetReviewers()
         {
             var reviewers = _mapper.Map<List<ReviewerDTO>>(_reviewerRepository.GetReviewers());
             return Ok(reviewers);
         }
 
-        [HttpGet("reviewer/{id}")]
+        [HttpGet("{id}")]
+        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
         public IActionResult GetReviewer(int id)
         {
             var reviewer = _reviewerRepository.GetReviewerById(id);
@@ -36,14 +38,18 @@ namespace ReviewApp.Controllers
             return Ok(reviewerDTO);
         }
 
-        [HttpGet("reviewer-exists/{id}")]
+        [HttpGet("exists/{id}")]
+        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
+
         public IActionResult ReviewerExist(int id)
         {
             var exists = _reviewerRepository.ReviewerExist(id);
             return Ok(exists);
         }
 
-        [HttpGet("reviews-by-reviewer/{id}")]
+        [HttpGet("{id}/reviews")]
+        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))] 
+
         public IActionResult GetReviewsByReviewer(int id)
         {
             var reviews = _reviewerRepository.GetReviewsByReviewer(id);
@@ -54,7 +60,7 @@ namespace ReviewApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateOwner([FromBody] ReviewerDTO ReviewerCreate)
+        public IActionResult CreateReviewer([FromBody] ReviewerDTO ReviewerCreate)
         {
             if (ReviewerCreate == null) { return BadRequest(); }
 
@@ -83,12 +89,12 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpPut()]
+        [HttpPut("id")]
 
-        public IActionResult UpdateReviewer(int ReviewerId, [FromBody] ReviewerDTO upReviewer)
+        public IActionResult UpdateReviewer(int id, [FromBody] ReviewerDTO upReviewer)
         {
             if (upReviewer == null) { return BadRequest(ModelState); }
-            if (ReviewerId != upReviewer.Id) return BadRequest(ModelState);
+            if (id != upReviewer.Id) return BadRequest(ModelState);
             if (!_reviewerRepository.ReviewerExist(upReviewer.Id)) return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
@@ -104,11 +110,12 @@ namespace ReviewApp.Controllers
 
         }
 
-        [HttpDelete]
-        public IActionResult DeleteReview(int id)
+        [HttpDelete("id")]
+        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
+
+        public IActionResult DeleteReviewer(int id)
         {
 
-            if (!_reviewerRepository.ReviewerExist(id)) return NotFound();
 
             var ReviewToDelete = _reviewerRepository.GetReviewerById(id);
             _reviewerRepository.DeleteReviewer(ReviewToDelete);

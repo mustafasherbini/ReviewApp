@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewApp.DTO;
+using ReviewApp.Filters.IActionFilters;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 using System.Collections.Generic;
@@ -9,8 +10,9 @@ using System.Linq;
 
 namespace ReviewApp.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+
     public class OwnerController : ControllerBase
     {
         private readonly IOwnerRepository _ownerRepository;
@@ -24,7 +26,7 @@ namespace ReviewApp.Controllers
             _countryRepository = countryRepository; 
         }
 
-        [HttpGet("owners")]
+        [HttpGet("All")]
         public IActionResult GetOwners()
         {
             var owners = _ownerRepository.GetAll();
@@ -32,49 +34,44 @@ namespace ReviewApp.Controllers
             return Ok(ownersDTOs);
         }
 
-        [HttpGet("owners/{id}")]
+
+        [HttpGet("{id}")]
+        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
+
         public IActionResult GetOwner(int id)
         {
-            if (!_ownerRepository.OwnerExist(id))
-            {
-                return NotFound(); // Owner does not exist, return a 404 response.
-            }
-
+       
             var owner = _ownerRepository.GetOwner(id);
             var ownerDTO = _mapper.Map<OwnerDTO>(owner);
             return Ok(ownerDTO);
         }
 
-        [HttpGet("owners/exists/{id}")]
+        [HttpGet("exists/{id}")]
+        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
+
         public IActionResult CheckOwnerExistence(int id)
         {
             var exists = _ownerRepository.OwnerExist(id);
             return Ok(exists);
         }
 
-        [HttpGet("owners/{id}/product")]
+        [HttpGet("{id}/product")]
+        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
+
         public IActionResult GetProductByOwner(int id)
         {
-            if (!_ownerRepository.OwnerExist(id))
-            {
-                return NotFound(); // Owner does not exist, return a 404 response.
-            }
+            
 
             var product = _ownerRepository.GetProductsByOwner(id);
             var productDTOs = _mapper.Map<List<ProductDTO>>(product);
             return Ok(productDTOs);
         }
 
-        [HttpGet("product/{id}/owners")]
+        [HttpGet("Product/{id}")]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         public IActionResult GetOwnersOfAProduct(int id)
         {
             var owners = _ownerRepository.GetOwnerOfAProduct(id);
-
-            if (owners == null || !owners.Any())
-            {
-                return NotFound(); // Return a 404 response if no owners for the specified Pokémon are found.
-            }
-
             var ownerDTOs = _mapper.Map<List<OwnerDTO>>(owners);
             return Ok(ownerDTOs);
         }
@@ -110,7 +107,7 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpPut()]
+        [HttpPut("{id}")]
 
         public IActionResult UpdateOwner(int OwneryId, [FromBody] OwnerDTO upowner)
         {
@@ -131,11 +128,10 @@ namespace ReviewApp.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
+        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
         public IActionResult DeleteOwner(int id)
         {
-
-            if (!_ownerRepository.OwnerExist(id)) return NotFound();
 
             var OwnerToDelete = _ownerRepository.GetOwner(id);
             _ownerRepository.DeleteOwner(OwnerToDelete);
