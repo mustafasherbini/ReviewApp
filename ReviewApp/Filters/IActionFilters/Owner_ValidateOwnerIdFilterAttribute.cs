@@ -8,11 +8,11 @@ namespace ReviewApp.Filters.IActionFilters
 {
     public class Owner_ValidateOwnerIdFilterAttribute : ActionFilterAttribute
     {
-       IOwnerRepository _OwnerRepository;
+        IOwnerRepository _ownerRepository;
 
-        public Owner_ValidateOwnerIdFilterAttribute(IOwnerRepository OwnerRepository)
+        public Owner_ValidateOwnerIdFilterAttribute(IOwnerRepository ownerRepository)
         {
-            _OwnerRepository = OwnerRepository;
+            _ownerRepository = ownerRepository;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -34,9 +34,9 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_OwnerRepository.OwnerExist(OwnerID))
+                else if (!_ownerRepository.OwnerExist(OwnerID))
                 {
-                    context.ModelState.AddModelError("OwnerID", "Owner doesn't exist");
+                    context.ModelState.AddModelError("OwnerID", "Prodect doesn't exist");
 
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {

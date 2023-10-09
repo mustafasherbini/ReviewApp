@@ -35,9 +35,9 @@ namespace ReviewApp.Controllers
         }
 
 
+
         [HttpGet("{id}")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
-
         public IActionResult GetOwner(int id)
         {
        
@@ -55,9 +55,9 @@ namespace ReviewApp.Controllers
             return Ok(exists);
         }
 
+
         [HttpGet("{id}/product")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
-
         public IActionResult GetProductByOwner(int id)
         {
             
@@ -66,6 +66,8 @@ namespace ReviewApp.Controllers
             var productDTOs = _mapper.Map<List<ProductDTO>>(product);
             return Ok(productDTOs);
         }
+
+
 
         [HttpGet("Product/{id}")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
@@ -76,44 +78,24 @@ namespace ReviewApp.Controllers
             return Ok(ownerDTOs);
         }
 
+
         [HttpPost]
+        [TypeFilter(typeof(Owner_ValidateCreateOwnerFilterAttribute))]
         public IActionResult CreateOwner([FromBody] OwnerDTO OwnerCreate , [FromQuery] int CountryID)
         {
-            if (OwnerCreate == null) { return BadRequest(); }
 
-            var Owners = _ownerRepository.GetAll()
-                .Where(c => c.LastName.Trim().ToUpper() == OwnerCreate.LastName.Trim().ToUpper()).
-                FirstOrDefault();
-
-            if (Owners != null)
-            {
-                ModelState.AddModelError("", "Owner alredy exists");
-                return StatusCode(422, ModelState);
-            }
-            if (!ModelState.IsValid) { return BadRequest(); }
            var OwnerMap = _mapper.Map<Owner>(OwnerCreate);
       
-
-            OwnerMap.Country = _countryRepository.GetCountry(CountryID) ;
-
-            if (!_ownerRepository.CreateOwner(OwnerMap))
-            {
-
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-
-            }
-            return Ok("Successfully Created");
+            OwnerMap.Country = _countryRepository.GetCountry(CountryID) ;            
+            return Ok(_ownerRepository.CreateOwner(OwnerMap));
         }
 
 
         [HttpPut("{id}")]
-
-        public IActionResult UpdateOwner(int OwneryId, [FromBody] OwnerDTO upowner)
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
+        [TypeFilter(typeof(Owner_ValidateUpdateOwnerFilterAttribute))]
+        public IActionResult UpdateOwner(int id, [FromBody] OwnerDTO upowner)
         {
-            if (upowner == null) { return BadRequest(ModelState); }
-            if (OwneryId != upowner.Id) return BadRequest(ModelState);
-            if (!_countryRepository.CountryExist(upowner.Id)) return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
             var ownerMap = _mapper.Map<Owner>(upowner);
@@ -127,6 +109,7 @@ namespace ReviewApp.Controllers
             return NoContent();
 
         }
+
 
         [HttpDelete("{id}")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]

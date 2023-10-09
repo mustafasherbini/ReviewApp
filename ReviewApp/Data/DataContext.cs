@@ -34,10 +34,12 @@ namespace ReviewApp.Data
 
             modelBuilder.Entity<ProductOwner>()
                     .HasKey(po => new { po.ProductId, po.OwnerId });
+
             modelBuilder.Entity<ProductOwner>()
                     .HasOne(p => p.Product)
                     .WithMany(pc => pc.ProductOwners)
                     .HasForeignKey(p => p.ProductId);
+
             modelBuilder.Entity<ProductOwner>()
                     .HasOne(p => p.Owner)
                     .WithMany(pc => pc.ProductOwners)

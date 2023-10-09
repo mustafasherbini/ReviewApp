@@ -10,9 +10,9 @@ namespace ReviewApp.Filters.IActionFilters
     {
         IReviewRepository _ReviewRepository;
 
-        public Review_ValidateReviewIdFilterAttribute(ReviewRepository ReviewRepository)
+        public Review_ValidateReviewIdFilterAttribute(IReviewRepository reviewRepository)
         {
-            _ReviewRepository = ReviewRepository;
+            _ReviewRepository = reviewRepository;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -21,8 +21,7 @@ namespace ReviewApp.Filters.IActionFilters
 
 
             var ReviewID = context.ActionArguments["id"] as int?;
-            if (ReviewID != null)
-            {
+          
                 if (ReviewID <= 0)
                 {
 
@@ -44,7 +43,7 @@ namespace ReviewApp.Filters.IActionFilters
                     };
                     context.Result = new NotFoundObjectResult(problemDeatails);
                 }
-            }
+            
 
         }
     }

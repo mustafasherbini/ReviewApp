@@ -6,11 +6,11 @@ using ReviewApp.Repository;
 
 namespace ReviewApp.Filters.IActionFilters
 {
-    public class Category_CategoryIdFilterAttribute : ActionFilterAttribute
+    public class Category_ValidateCategoryIdFilterAttribute : ActionFilterAttribute
     {
         ICategoryRepository _CategoryRepository;
 
-        public Category_CategoryIdFilterAttribute(ICategoryRepository CategoryRepository)
+        public Category_ValidateCategoryIdFilterAttribute(ICategoryRepository CategoryRepository)
         {
             _CategoryRepository = CategoryRepository;
         }

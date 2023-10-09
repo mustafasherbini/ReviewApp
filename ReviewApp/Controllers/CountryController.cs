@@ -72,37 +72,27 @@ namespace ReviewApp.Controllers
 
 
         [HttpPost]
+        [TypeFilter(typeof(Country_ValidateCreateCountryFilterAttribute))]
+
         public IActionResult CreateCountry([FromBody] CountryDTO CountryCreate)
         {
-            if (CountryCreate == null) { return BadRequest(); }
-
-            var Category = _countryRepository.GetCountryByName(CountryCreate.Name);
-            if (Category != null)
-            {
-                ModelState.AddModelError("", "Country alredy exists");
-                return StatusCode(422, ModelState);
-            }
-            if (!ModelState.IsValid) { return BadRequest(); }
             var categotyMap = _mapper.Map<Country>(CountryCreate);
-            if (!_countryRepository.CreateCountry(categotyMap))
-            {
-
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-
-            }
-            return Ok("Successfully Created");
+          
+            return Ok(_countryRepository.CreateCountry(categotyMap));
         }
 
         [HttpPut("{id}")]
 
+        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
+        [TypeFilter(typeof(Country_ValidateUpdateCountryFilterAttribute))]
+
+       
         public IActionResult UpdateCountry(int id, [FromBody] CountryDTO upcountry)
         {
             if (upcountry == null) { return BadRequest(ModelState); }
             if (id != upcountry.Id) return BadRequest(ModelState);
             if (!_countryRepository.CountryExist(upcountry.Id)) return NotFound();
 
-            if (!ModelState.IsValid) return BadRequest();
             var countryMap = _mapper.Map<Country>(upcountry);
 
             if (!_countryRepository.UpdateCountry(countryMap))

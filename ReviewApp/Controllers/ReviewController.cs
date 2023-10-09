@@ -68,8 +68,6 @@ namespace ReviewApp.Controllers
         [HttpPost]
         public IActionResult CreateReview([FromBody] ReviewDTO ReviewCreate, [FromQuery] int reviwerID, [FromQuery] int ProductID)
         {
-            if (ReviewCreate == null) { return BadRequest(); }
-
 
             var ReviewMap = _mapper.Map<Review>(ReviewCreate);
             ReviewMap.Reviewer = _reviewerRepository.GetReviewerById(reviwerID);
@@ -83,17 +81,17 @@ namespace ReviewApp.Controllers
 
             }
             return Ok("Successfully Created");
+
         }
 
 
         [HttpPut("{id}")]
+        [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
+        [TypeFilter(typeof(Review_ValidateUpdateReviewFilterAttribute))]
+
         public IActionResult UpdateReview(int id, [FromBody] ReviewDTO upReview)
         {
-            if (upReview == null) { return BadRequest(ModelState); }
-            if (id != upReview.Id) return BadRequest(ModelState);
-            if (!_reviewRepository.ReviewExists(upReview.Id)) return NotFound();
 
-            if (!ModelState.IsValid) return BadRequest();
             var ReviewMap = _mapper.Map<Review>(upReview);
 
             if (!_reviewRepository.UpdateReview(ReviewMap))

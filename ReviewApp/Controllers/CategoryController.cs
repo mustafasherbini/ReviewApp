@@ -34,7 +34,8 @@ namespace ReviewApp.Controllers
 
 
         [HttpGet("{id}")]
-        [TypeFilter(typeof(Category_CategoryIdFilterAttribute))]
+        [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
+
         public IActionResult GetCategory(int id)
         {
             var categoryDTO = _mapper.Map<CategoryDTO>(_categoryRepository.GetCategoryById(id));
@@ -44,6 +45,10 @@ namespace ReviewApp.Controllers
 
 
         [HttpGet("exists/{id}")]
+
+        [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
+
+
         public IActionResult CheckCategoryExistence(int id)
         {
             var exists = _categoryRepository.DoesCategoryExist(id);
@@ -54,7 +59,8 @@ namespace ReviewApp.Controllers
 
 
         [HttpGet("{id}/Product")]
-        [TypeFilter(typeof(Category_CategoryIdFilterAttribute))]
+        [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
+
         public IActionResult GetProductByCategory(int id)
         {
             var products = _categoryRepository.GetProductByCategoryId(id);
@@ -65,39 +71,25 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpPost]   
+        [HttpPost]
+        [TypeFilter(typeof(Category_ValidateCreateCategoryFilterAttribute))]
+
         public IActionResult CreateCategory([FromBody] CategoryDTO categoryCreate)
         {
-            if (categoryCreate == null) { return  BadRequest(); }
-
-            var Category=_categoryRepository.GetCategoryByName(categoryCreate.Name);
-            if (Category != null)
-            {
-                ModelState.AddModelError("", "Category alredy exists");
-                return StatusCode(422, ModelState);
-            }
-             if(!ModelState.IsValid) { return BadRequest(); }
             var categotyMap = _mapper.Map<Category>(categoryCreate);
-            if(!_categoryRepository.CreateCategory(categotyMap)) {
-
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500,ModelState);
-            
-            }
-            return Ok("Successfully Created");
+            return Ok(_categoryRepository.CreateCategory(categotyMap));
         }
 
 
 
 
         [HttpPut(("{id}"))]
+
+        [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
+        [TypeFilter(typeof(Category_ValidateUpdateCategoryFilterAttribute))]
         public IActionResult UpdateCategory( int id , [FromBody]CategoryDTO upcategory )
         {
-            if (upcategory == null) { return BadRequest(ModelState); }
-            if(id != upcategory.Id)return BadRequest(ModelState);
-            if(!_categoryRepository.DoesCategoryExist(upcategory.Id))return NotFound();
-
-            if(!ModelState.IsValid)return BadRequest();
+     
             var categoryMap = _mapper.Map<Category>(upcategory);
 
             if (!_categoryRepository.UpdateCategory(categoryMap))
@@ -114,7 +106,7 @@ namespace ReviewApp.Controllers
 
 
         [HttpDelete("{id}")]
-        [TypeFilter(typeof(Category_CategoryIdFilterAttribute))]
+        [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
         public IActionResult DeleteCategory(int id)
         {
 

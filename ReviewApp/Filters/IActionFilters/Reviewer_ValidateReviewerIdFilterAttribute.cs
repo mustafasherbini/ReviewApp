@@ -10,7 +10,7 @@ namespace ReviewApp.Filters.IActionFilters
     {
         IReviewerRepository _ReviewerRepository;
 
-        public Reviewer_ValidateReviewerIdFilterAttribute(ReviewerRepository ReviewerRepository)
+        public Reviewer_ValidateReviewerIdFilterAttribute(IReviewerRepository ReviewerRepository)
         {
             _ReviewerRepository = ReviewerRepository;
         }
@@ -21,8 +21,7 @@ namespace ReviewApp.Filters.IActionFilters
 
 
             var ReviewerID = context.ActionArguments["id"] as int?;
-            if (ReviewerID != null)
-            {
+           
                 if (ReviewerID <= 0)
                 {
 
@@ -44,7 +43,7 @@ namespace ReviewApp.Filters.IActionFilters
                     };
                     context.Result = new NotFoundObjectResult(problemDeatails);
                 }
-            }
+            
 
         }
     }

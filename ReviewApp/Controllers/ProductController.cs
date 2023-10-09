@@ -78,40 +78,26 @@ namespace ReviewApp.Controllers
 
 
         [HttpPost()]
+        [TypeFilter(typeof(Product_ValidateCreateProductFilterAttribute))]
         public IActionResult CreateProduct([FromBody] ProductDTO ProductCreate ,[FromQuery] int ownerID ,[FromQuery] int CategoryID)
         {
-            if (ProductCreate == null) { return BadRequest(); }
 
-            var Products = _productRepository.GetProduct(ProductCreate.Name);
-            if (Products != null)
-            {
-                ModelState.AddModelError("", "Product alredy exists");
-                return StatusCode(422, ModelState);
-            }
+            
 
-            if (!ModelState.IsValid) { return BadRequest(); }
             var ProductMap = _mapper.Map<Product>(ProductCreate);
            
-            if (!_productRepository.CreateProduct(ownerID, CategoryID, ProductMap))
-            {
-
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-
-            }
-            return Ok("Successfully Created");
+        
+            return Ok(_productRepository.CreateProduct(ownerID, CategoryID, ProductMap));
         }
 
 
 
         [HttpPut("{id}")]
-        public IActionResult UpdateProduct(int id, [FromBody] ProductDTO upProduct)
-        {
-            if (upProduct == null) { return BadRequest(ModelState); }
-            if (id != upProduct.Id) return BadRequest(ModelState);
-            if (!_productRepository.ProductExist(upProduct.Id)) return NotFound();
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
+        [TypeFilter(typeof(Product_ValidateUpdateProductFilterAttribute))]
 
-            if (!ModelState.IsValid) return BadRequest();
+        public IActionResult UpdateProduct(int id, [FromBody] ProductDTO upProduct)
+        { 
             var ProductMap = _mapper.Map<Product>(upProduct);
 
             if (!_productRepository.UpdateProduct(ProductMap))

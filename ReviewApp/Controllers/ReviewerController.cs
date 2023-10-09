@@ -60,36 +60,21 @@ namespace ReviewApp.Controllers
         }
 
         [HttpPost]
+        [TypeFilter(typeof(Reviewer_ValidateCreateReviewerFilterAttribute))]
+
         public IActionResult CreateReviewer([FromBody] ReviewerDTO ReviewerCreate)
         {
-            if (ReviewerCreate == null) { return BadRequest(); }
 
-            var Reviewer = _reviewerRepository.GetReviewers()
-                .Where(c => c.LastName.Trim().ToUpper() == ReviewerCreate.LastName.Trim().ToUpper()).
-                FirstOrDefault();
-
-            if (Reviewer != null)
-            {
-                ModelState.AddModelError("", "Reviewer alredy exists");
-                return StatusCode(422, ModelState);
-            }
-            if (!ModelState.IsValid) { return BadRequest(); }
             var ReviewerMap = _mapper.Map<Reviewer>(ReviewerCreate);
 
-
-
-            if (!_reviewerRepository.CreateReviewer(ReviewerMap))
-            {
-
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-
-            }
-            return Ok("Successfully Created");
+            return Ok(_reviewerRepository.CreateReviewer(ReviewerMap));
         }
 
 
         [HttpPut("id")]
+        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
+
+        [TypeFilter(typeof(Reviewer_ValidateUpdateReviewerFilterAttribute))]
 
         public IActionResult UpdateReviewer(int id, [FromBody] ReviewerDTO upReviewer)
         {
