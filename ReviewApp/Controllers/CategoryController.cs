@@ -33,37 +33,32 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{CategoryID}")]
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
-
-        public IActionResult GetCategory(int id)
+        public IActionResult GetCategory(int CategoryID)
         {
-            var categoryDTO = _mapper.Map<CategoryDTO>(_categoryRepository.GetCategoryById(id));
+            var categoryDTO = _mapper.Map<CategoryDTO>(_categoryRepository.GetCategoryById(CategoryID));
             return Ok(categoryDTO);
         }
 
 
 
-        [HttpGet("exists/{id}")]
-
+        [HttpGet("exists/{CategoryID}")]
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
-
-
-        public IActionResult CheckCategoryExistence(int id)
+        public IActionResult CheckCategoryExistence(int CategoryID)
         {
-            var exists = _categoryRepository.DoesCategoryExist(id);
+            var exists = _categoryRepository.DoesCategoryExist(CategoryID);
             return Ok(exists);
         }
 
 
 
 
-        [HttpGet("{id}/Product")]
+        [HttpGet("{CategoryID}/Product")]
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
-
-        public IActionResult GetProductByCategory(int id)
+        public IActionResult GetProductByCategory(int CategoryID)
         {
-            var products = _categoryRepository.GetProductByCategoryId(id);
+            var products = _categoryRepository.GetProductByCategoryId(CategoryID);
             var productDTOs = _mapper.Map<List<ProductDTO>>(products);
             return Ok(productDTOs);
         }
@@ -73,7 +68,6 @@ namespace ReviewApp.Controllers
 
         [HttpPost]
         [TypeFilter(typeof(Category_ValidateCreateCategoryFilterAttribute))]
-
         public IActionResult CreateCategory([FromBody] CategoryDTO categoryCreate)
         {
             var categotyMap = _mapper.Map<Category>(categoryCreate);
@@ -83,11 +77,11 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpPut(("{id}"))]
+        [HttpPut(("{CategoryID}"))]
 
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
         [TypeFilter(typeof(Category_ValidateUpdateCategoryFilterAttribute))]
-        public IActionResult UpdateCategory( int id , [FromBody]CategoryDTO upcategory )
+        public IActionResult UpdateCategory( int CategoryID , [FromBody]CategoryDTO upcategory )
         {
      
             var categoryMap = _mapper.Map<Category>(upcategory);
@@ -105,12 +99,12 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{CategoryID}")]
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
-        public IActionResult DeleteCategory(int id)
+        public IActionResult DeleteCategory(int CategoryID)
         {
 
-            var categoryToDelete = _categoryRepository.GetCategoryById(id);
+            var categoryToDelete = _categoryRepository.GetCategoryById(CategoryID);
             _categoryRepository.DeleteCategory(categoryToDelete);  
 
          return   Ok();

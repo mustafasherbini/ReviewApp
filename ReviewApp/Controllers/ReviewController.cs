@@ -31,34 +31,34 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{ReviewID}")]
         [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
-        public IActionResult GetReview(int id)
+        public IActionResult GetReview(int ReviewID)
         {
-            var review = _reviewRepository.GetReview(id);
+            var review = _reviewRepository.GetReview(ReviewID);
             var reviewDTO = _mapper.Map<ReviewDTO>(review);
             return Ok(reviewDTO);
         }
         
 
 
-        [HttpGet("exists/{id}")]
+        [HttpGet("exists/{ReviewID}")]
         [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
 
-        public IActionResult ReviewExist(int id)
+        public IActionResult ReviewExist(int ReviewID)
         {
-            var exists = _reviewRepository.ReviewExists(id);
+            var exists = _reviewRepository.ReviewExists(ReviewID);
             return Ok(exists);
         }
 
 
 
-        [HttpGet("{id}/product")]
+        [HttpGet("{ProductID}/product")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
 
-        public IActionResult GetReviewsOfAProduct(int id)
+        public IActionResult GetReviewsOfAProduct(int ProductID)
         {
-            var ProductReviews = _reviewRepository.GetReviewsOfAProduct(id);
+            var ProductReviews = _reviewRepository.GetReviewsOfAProduct(ProductID);
 
             var reviewsDTO = _mapper.Map<List<ReviewDTO>>(ProductReviews);
 
@@ -66,14 +66,17 @@ namespace ReviewApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateReview([FromBody] ReviewDTO ReviewCreate, [FromQuery] int reviwerID, [FromQuery] int ProductID)
+        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
+        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
+
+        public IActionResult CreateReview([FromBody] ReviewDTO ReviewCreate, [FromQuery] int ReviewerID, [FromQuery] int ProductID)
         {
 
             var ReviewMap = _mapper.Map<Review>(ReviewCreate);
-            ReviewMap.Reviewer = _reviewerRepository.GetReviewerById(reviwerID);
+            ReviewMap.Reviewer = _reviewerRepository.GetReviewerById(ReviewerID);
             ReviewMap.Product = _productRepository.GetProduct(ProductID);
 
-            if (!_reviewRepository.CreateReview(ReviewMap, ProductID, reviwerID))
+            if (!_reviewRepository.CreateReview(ReviewMap, ProductID, ReviewerID))
             {
 
                 ModelState.AddModelError("", "Something went wrong while saving");
@@ -85,11 +88,11 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{ReviewID}")]
         [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
         [TypeFilter(typeof(Review_ValidateUpdateReviewFilterAttribute))]
 
-        public IActionResult UpdateReview(int id, [FromBody] ReviewDTO upReview)
+        public IActionResult UpdateReview(int ReviewID, [FromBody] ReviewDTO upReview)
         {
 
             var ReviewMap = _mapper.Map<Review>(upReview);
@@ -105,13 +108,13 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{ReviewID}")]
         [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
 
-        public IActionResult DeleteReview(int id)
+        public IActionResult DeleteReview(int ReviewID)
         {
 
-            var ReviewToDelete = _reviewRepository.GetReview(id);
+            var ReviewToDelete = _reviewRepository.GetReview(ReviewID);
             _reviewRepository.DeleteReview(ReviewToDelete);
 
             return Ok();

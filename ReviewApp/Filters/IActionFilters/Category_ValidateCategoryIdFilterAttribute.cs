@@ -20,10 +20,10 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var categoryID = context.ActionArguments["id"] as int?;
-            if (categoryID != null)
+            var ID = context.ActionArguments["CategoryID"] as int?;
+            if (ID != null)
             {
-                if (categoryID <= 0)
+                if (ID <= 0)
                 {
 
                     context.ModelState.AddModelError("CategoryID", "CategoryID is invalid");
@@ -34,7 +34,7 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_CategoryRepository.DoesCategoryExist(categoryID))
+                else if (!_CategoryRepository.DoesCategoryExist(ID))
                 {
                     context.ModelState.AddModelError("CategoryID", "Category doesn't exist");
 

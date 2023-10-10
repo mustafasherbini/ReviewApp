@@ -36,44 +36,44 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{OwnerID}")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
-        public IActionResult GetOwner(int id)
+        public IActionResult GetOwner(int OwnerID)
         {
        
-            var owner = _ownerRepository.GetOwner(id);
+            var owner = _ownerRepository.GetOwner(OwnerID);
             var ownerDTO = _mapper.Map<OwnerDTO>(owner);
             return Ok(ownerDTO);
         }
 
-        [HttpGet("exists/{id}")]
+        [HttpGet("exists/{OwnerID}")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
 
-        public IActionResult CheckOwnerExistence(int id)
+        public IActionResult CheckOwnerExistence(int OwnerID)
         {
-            var exists = _ownerRepository.OwnerExist(id);
+            var exists = _ownerRepository.OwnerExist(OwnerID);
             return Ok(exists);
         }
 
 
-        [HttpGet("{id}/product")]
+        [HttpGet("{OwnerID}/product")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
-        public IActionResult GetProductByOwner(int id)
+        public IActionResult GetProductByOwner(int OwnerID)
         {
             
 
-            var product = _ownerRepository.GetProductsByOwner(id);
+            var product = _ownerRepository.GetProductsByOwner(OwnerID);
             var productDTOs = _mapper.Map<List<ProductDTO>>(product);
             return Ok(productDTOs);
         }
 
 
 
-        [HttpGet("Product/{id}")]
+        [HttpGet("Product/{ProductID}")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
-        public IActionResult GetOwnersOfAProduct(int id)
+        public IActionResult GetOwnersOfAProduct(int ProductID)
         {
-            var owners = _ownerRepository.GetOwnerOfAProduct(id);
+            var owners = _ownerRepository.GetOwnerOfAProduct(ProductID);
             var ownerDTOs = _mapper.Map<List<OwnerDTO>>(owners);
             return Ok(ownerDTOs);
         }
@@ -81,6 +81,8 @@ namespace ReviewApp.Controllers
 
         [HttpPost]
         [TypeFilter(typeof(Owner_ValidateCreateOwnerFilterAttribute))]
+        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
+
         public IActionResult CreateOwner([FromBody] OwnerDTO OwnerCreate , [FromQuery] int CountryID)
         {
 
@@ -91,10 +93,10 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{OwnerID}")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         [TypeFilter(typeof(Owner_ValidateUpdateOwnerFilterAttribute))]
-        public IActionResult UpdateOwner(int id, [FromBody] OwnerDTO upowner)
+        public IActionResult UpdateOwner(int OwnerID, [FromBody] OwnerDTO upowner)
         {
 
             if (!ModelState.IsValid) return BadRequest();
@@ -111,12 +113,12 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{OwnerID}")]
         [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
-        public IActionResult DeleteOwner(int id)
+        public IActionResult DeleteOwner(int OwnerID)
         {
 
-            var OwnerToDelete = _ownerRepository.GetOwner(id);
+            var OwnerToDelete = _ownerRepository.GetOwner(OwnerID);
             _ownerRepository.DeleteOwner(OwnerToDelete);
 
             return Ok();

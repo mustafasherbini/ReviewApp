@@ -33,39 +33,39 @@ namespace ReviewApp.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{CountryID}")]
         [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
 
-        public IActionResult GetCountry(int id)
+        public IActionResult GetCountry(int CountryID)
         {
-            var country = _countryRepository.GetCountry(id);
+            var country = _countryRepository.GetCountry(CountryID);
             var countryDTO = _mapper.Map<CountryDTO>(country);
             return Ok(countryDTO);
         }
 
-        [HttpGet("exists/{id}")]
+        [HttpGet("exists/{CountryID}")]
         [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
-        public IActionResult CheckCountryExistence(int id)
+        public IActionResult CheckCountryExistence(int CountryID)
         {
-            var exists = _countryRepository.CountryExist(id);
+            var exists = _countryRepository.CountryExist(CountryID);
             return Ok(exists);
         }
 
 
-        [HttpGet("owner/{id}")]
-        public IActionResult GetCountryByOwner(int id)
+        [HttpGet("owner/{OwnerID}")]
+        public IActionResult GetCountryByOwner(int OwnerID)
         {
-            var country = _countryRepository.GetCountryByOwner(id);
+            var country = _countryRepository.GetCountryByOwner(OwnerID);
             var countryDTO = _mapper.Map<CountryDTO>(country);
             return Ok(countryDTO);
         }
 
 
-        [HttpGet("{id}/owners")]
+        [HttpGet("{CountryID}/owners")]
         [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
-        public IActionResult GetOwnersByCountry(int id)
+        public IActionResult GetOwnersByCountry(int CountryID)
         {
-            var owners = _countryRepository.GetOwnersByCountry(id);
+            var owners = _countryRepository.GetOwnersByCountry(CountryID);
             var ownerDTOs = _mapper.Map<List<OwnerDTO>>(owners);
             return Ok(ownerDTOs);
         }
@@ -81,17 +81,15 @@ namespace ReviewApp.Controllers
             return Ok(_countryRepository.CreateCountry(categotyMap));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{CountryID}")]
 
         [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
         [TypeFilter(typeof(Country_ValidateUpdateCountryFilterAttribute))]
 
        
-        public IActionResult UpdateCountry(int id, [FromBody] CountryDTO upcountry)
+        public IActionResult UpdateCountry(int CountryID, [FromBody] CountryDTO upcountry)
         {
-            if (upcountry == null) { return BadRequest(ModelState); }
-            if (id != upcountry.Id) return BadRequest(ModelState);
-            if (!_countryRepository.CountryExist(upcountry.Id)) return NotFound();
+     
 
             var countryMap = _mapper.Map<Country>(upcountry);
 
@@ -105,13 +103,13 @@ namespace ReviewApp.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{CountryID}")]
         [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
-        public IActionResult DeleteCountry(int id)
+        public IActionResult DeleteCountry(int CountryID)
         {
 
 
-            var CountryToDelete = _countryRepository.GetCountry(id);
+            var CountryToDelete = _countryRepository.GetCountry(CountryID);
             _countryRepository.DeleteCountry(CountryToDelete);
 
             return Ok();

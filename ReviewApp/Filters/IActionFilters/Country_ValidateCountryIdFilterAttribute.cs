@@ -20,13 +20,13 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var CountryID = context.ActionArguments["id"] as int?;
-            if (CountryID != null)
+            var ID = context.ActionArguments["CountryID"] as int?;
+            if (ID != null)
             {
-                if (CountryID <= 0)
+                if (ID <= 0)
                 {
 
-                    context.ModelState.AddModelError("CountryID", "CountryID is invalid");
+                    context.ModelState.AddModelError("ID", "ID is invalid");
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {
                         Status = StatusCodes.Status400BadRequest
@@ -34,9 +34,9 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_CountryRepository.CountryExist(CountryID))
+                else if (!_CountryRepository.CountryExist(ID))
                 {
-                    context.ModelState.AddModelError("CountryID", "Country doesn't exist");
+                    context.ModelState.AddModelError("ID", "Country doesn't exist");
 
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {

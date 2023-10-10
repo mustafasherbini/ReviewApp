@@ -20,12 +20,12 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var ReviewerID = context.ActionArguments["id"] as int?;
+            var ID = context.ActionArguments["ID"] as int?;
            
-                if (ReviewerID <= 0)
+                if (ID <= 0)
                 {
 
-                    context.ModelState.AddModelError("ReviewerID", "ReviewerID is invalid");
+                    context.ModelState.AddModelError("ID", "ID is invalid");
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {
                         Status = StatusCodes.Status400BadRequest
@@ -33,9 +33,9 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_ReviewerRepository.ReviewerExist(ReviewerID))
+                else if (!_ReviewerRepository.ReviewerExist(ID))
                 {
-                    context.ModelState.AddModelError("ReviewerID", "Reviewer doesn't exist");
+                    context.ModelState.AddModelError("ID", "Reviewer doesn't exist");
 
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {

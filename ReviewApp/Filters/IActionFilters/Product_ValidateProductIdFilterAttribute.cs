@@ -20,13 +20,13 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var ProdectID = context.ActionArguments["id"] as int?;
-            if (ProdectID != null)
+            var ID = context.ActionArguments["ProductID"] as int?;
+            if (ID != null)
             {
-                if (ProdectID <= 0)
+                if (ID <= 0)
                 {
 
-                    context.ModelState.AddModelError("ProdectID", "ProdectID is invalid");
+                    context.ModelState.AddModelError("ID", "ID is invalid");
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {
                         Status = StatusCodes.Status400BadRequest
@@ -34,9 +34,9 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_ProdectRepository.ProductExist(ProdectID))
+                else if (!_ProdectRepository.ProductExist(ID))
                 {
-                    context.ModelState.AddModelError("ProdectID", "Prodect doesn't exist");
+                    context.ModelState.AddModelError("ID", "Prodect doesn't exist");
 
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {

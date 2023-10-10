@@ -33,11 +33,11 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{ProductID}")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
-        public IActionResult GetProduct(int id)
+        public IActionResult GetProduct(int ProductID)
         {
-            var product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(id));
+            var product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(ProductID));
             if (product == null) return NotFound();
             return Ok(product);
         }
@@ -56,23 +56,23 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpGet("{id}/rating")]
+        [HttpGet("{ProductID}/rating")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
-        public IActionResult GetProductRating(int id)
+        public IActionResult GetProductRating(int ProductID)
         {
    
-            return Ok(_productRepository.GetProductRating(id));
+            return Ok(_productRepository.GetProductRating(ProductID));
         }
 
 
 
 
 
-        [HttpGet("{id}/exists")]
+        [HttpGet("{ProductID}/exists")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
-        public IActionResult ProductExist(int id)
+        public IActionResult ProductExist(int ProductID)
         {
-            return Ok(_productRepository.ProductExist(id));
+            return Ok(_productRepository.ProductExist(ProductID));
         }
 
 
@@ -92,11 +92,10 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{ProductID}")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         [TypeFilter(typeof(Product_ValidateUpdateProductFilterAttribute))]
-
-        public IActionResult UpdateProduct(int id, [FromBody] ProductDTO upProduct)
+        public IActionResult UpdateProduct(int ProductID, [FromBody] ProductDTO upProduct)
         { 
             var ProductMap = _mapper.Map<Product>(upProduct);
 
@@ -112,11 +111,11 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{ProductID}")]
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
-        public IActionResult DeleteProduct(int id)
+        public IActionResult DeleteProduct(int ProductID)
         {
-            var ProductToDelete = _productRepository.GetProduct(id);
+            var ProductToDelete = _productRepository.GetProduct(ProductID);
             _productRepository.DeleteProduct(ProductToDelete);
             return Ok();
         }

@@ -20,13 +20,13 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var OwnerID = context.ActionArguments["id"] as int?;
-            if (OwnerID != null)
+            var ID = context.ActionArguments["ID"] as int?;
+            if (ID != null)
             {
-                if (OwnerID <= 0)
+                if (ID <= 0)
                 {
 
-                    context.ModelState.AddModelError("OwnerID", "OwnerID is invalid");
+                    context.ModelState.AddModelError("ID", "ID is invalid");
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {
                         Status = StatusCodes.Status400BadRequest
@@ -34,9 +34,9 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_ownerRepository.OwnerExist(OwnerID))
+                else if (!_ownerRepository.OwnerExist(ID))
                 {
-                    context.ModelState.AddModelError("OwnerID", "Prodect doesn't exist");
+                    context.ModelState.AddModelError("ID", "Prodect doesn't exist");
 
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {
