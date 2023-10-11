@@ -31,7 +31,7 @@ namespace ReviewApp.Repository
             return _Context.Owners.ToList();
         }
 
-        public Owner GetOwner(int ownerId)
+        public Owner GetOwner(int? ownerId)
         {
            
             return _Context.Owners.FirstOrDefault(o => o.Id == ownerId);
@@ -55,10 +55,7 @@ namespace ReviewApp.Repository
 
         }
 
-        public bool OwnerExist(int? ownerId)
-        {
-            return _Context.Owners.Any(o => o.Id == ownerId);
-        }
+       
 
         public bool Save()
         {

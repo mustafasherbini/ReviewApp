@@ -35,21 +35,10 @@ namespace ReviewApp.Controllers
         [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
         public IActionResult GetReview(int ReviewID)
         {
-            var review = _reviewRepository.GetReview(ReviewID);
-            var reviewDTO = _mapper.Map<ReviewDTO>(review);
+            var reviewDTO = _mapper.Map<ReviewDTO>(HttpContext.Items["review"]);
             return Ok(reviewDTO);
         }
         
-
-
-        [HttpGet("exists/{ReviewID}")]
-        [TypeFilter(typeof(Review_ValidateReviewIdFilterAttribute))]
-
-        public IActionResult ReviewExist(int ReviewID)
-        {
-            var exists = _reviewRepository.ReviewExists(ReviewID);
-            return Ok(exists);
-        }
 
 
 

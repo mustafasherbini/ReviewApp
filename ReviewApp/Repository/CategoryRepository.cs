@@ -22,22 +22,10 @@ _context.Add(category);
             return Save();
         }
 
-        public bool DeleteCategory(int  category)
-        {
-            _context.Remove(category);
-            return Save();
-        }
-
         public bool DeleteCategory(Category category)
         {
-
             _context.Remove(category);
             return Save();
-        }
-
-        public bool DoesCategoryExist(int? categoryId)
-        {
-            return _context.Categories.Any(c => c.Id == categoryId);
         }
 
         public IEnumerable<Category> GetAllCategories()
@@ -45,7 +33,7 @@ _context.Add(category);
             return _context.Categories.ToList();
         }
 
-        public Category GetCategoryById(int id)
+        public Category GetCategoryById(int? id)
         {
             return _context.Categories.SingleOrDefault(c => c.Id == id);
         }
@@ -63,17 +51,19 @@ _context.Add(category);
                 .ToList();
         }
 
-        public bool Save()
-        {
-var saved=_context.SaveChanges();
-            return saved > 0 ? true :false;
-        }
+       
 
         public bool UpdateCategory(Category category)
         {
 
             _context.Update(category);
            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
 
     }

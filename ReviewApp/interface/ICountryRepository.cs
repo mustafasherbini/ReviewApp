@@ -6,7 +6,7 @@ namespace ReviewApp
 {
         ICollection<Country> GetAll();
 
-         Country GetCountry(int CountryId);
+         Country GetCountry(int? CountryId);
         Country GetCountryByName(string Name);
         Country GetCountryByOwner( int OwnerId);
          ICollection<Owner>GetOwnersByCountry( int CountryId );

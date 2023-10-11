@@ -26,7 +26,7 @@ namespace ReviewApp.Controllers
         [HttpGet("All")]
         public async Task<IActionResult> GetProducts()
         {
-            var products = _mapper.Map<List<ProductDTO>>(_productRepository.GetProduct());
+            var products = _mapper.Map<List<ProductDTO>>(_productRepository.GetProducts());
             return Ok(products);
         }
 
@@ -37,15 +37,14 @@ namespace ReviewApp.Controllers
         [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
         public IActionResult GetProduct(int ProductID)
         {
-            var product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(ProductID));
-            if (product == null) return NotFound();
+            var product = _mapper.Map<ProductDTO>(HttpContext.Items["product"]);
             return Ok(product);
         }
 
 
 
         [HttpGet("ByName/{name}")]
-        public IActionResult GetProductByName([FromQuery] string name)
+        public IActionResult GetProductByName(string name)
         {
             var product = _mapper.Map<ProductDTO>(_productRepository.GetProduct(name));
             if (product == null) return NotFound();
@@ -64,16 +63,6 @@ namespace ReviewApp.Controllers
             return Ok(_productRepository.GetProductRating(ProductID));
         }
 
-
-
-
-
-        [HttpGet("{ProductID}/exists")]
-        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
-        public IActionResult ProductExist(int ProductID)
-        {
-            return Ok(_productRepository.ProductExist(ProductID));
-        }
 
 
 

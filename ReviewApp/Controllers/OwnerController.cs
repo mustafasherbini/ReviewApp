@@ -46,14 +46,6 @@ namespace ReviewApp.Controllers
             return Ok(ownerDTO);
         }
 
-        [HttpGet("exists/{OwnerID}")]
-        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
-
-        public IActionResult CheckOwnerExistence(int OwnerID)
-        {
-            var exists = _ownerRepository.OwnerExist(OwnerID);
-            return Ok(exists);
-        }
 
 
         [HttpGet("{OwnerID}/product")]
@@ -94,7 +86,7 @@ namespace ReviewApp.Controllers
 
 
         [HttpPut("{OwnerID}")]
-        [TypeFilter(typeof(Product_ValidateProductIdFilterAttribute))]
+        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
         [TypeFilter(typeof(Owner_ValidateUpdateOwnerFilterAttribute))]
         public IActionResult UpdateOwner(int OwnerID, [FromBody] OwnerDTO upowner)
         {

@@ -14,7 +14,7 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var reviewID = context.ActionArguments["id"] as int?;
+            var reviewID = context.ActionArguments["ReviewID"] as int?;
             var reviewobject = context.ActionArguments["upReview"] as ReviewDTO;
 
             if (reviewobject == null)

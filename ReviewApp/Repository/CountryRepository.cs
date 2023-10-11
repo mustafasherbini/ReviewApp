@@ -27,7 +27,7 @@ namespace ReviewApp.Repository
             return _context.Countries.ToList();
         }
 
-        public Country GetCountry(int CountryId)
+        public Country GetCountry(int? CountryId)
         {
          return _context.Countries.SingleOrDefault(country => country.Id == CountryId);
         }

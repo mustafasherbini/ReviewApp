@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
+using ReviewApp.Data;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 
@@ -9,10 +11,11 @@ namespace ReviewApp.Filters.IActionFilters
     public class Reviewer_ValidateReviewerIdFilterAttribute : ActionFilterAttribute
     {
         IReviewerRepository _ReviewerRepository;
-
-        public Reviewer_ValidateReviewerIdFilterAttribute(IReviewerRepository ReviewerRepository)
+        DataContext _dataContext;
+        public Reviewer_ValidateReviewerIdFilterAttribute(IReviewerRepository ReviewerRepository, DataContext dataContext)
         {
             _ReviewerRepository = ReviewerRepository;
+            _dataContext = dataContext;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -20,7 +23,7 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var ID = context.ActionArguments["ID"] as int?;
+            var ID = context.ActionArguments["ReviewerID"] as int?;
            
                 if (ID <= 0)
                 {
@@ -33,7 +36,12 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_ReviewerRepository.ReviewerExist(ID))
+                else 
+                {
+
+
+                var reviewer = _ReviewerRepository.GetReviewerById(ID);
+                if (reviewer == null)
                 {
                     context.ModelState.AddModelError("ID", "Reviewer doesn't exist");
 
@@ -42,7 +50,12 @@ namespace ReviewApp.Filters.IActionFilters
                         Status = StatusCodes.Status404NotFound
                     };
                     context.Result = new NotFoundObjectResult(problemDeatails);
+
                 }
+                else { context.HttpContext.Items["reviwer"] = reviewer;
+                    _dataContext.Entry(reviewer).State = EntityState.Detached;
+                }
+            }
             
 
         }

@@ -42,7 +42,7 @@ namespace ReviewApp.Repository
             return Save();
         }
 
-        public Product GetProduct(int id)
+        public Product GetProduct(int? id)
         {
         return _context.Product.SingleOrDefault(x=>x.Id == id);
         }
@@ -66,18 +66,13 @@ namespace ReviewApp.Repository
 
         }
 
-        public ICollection<Product> GetProduct()
+        public ICollection<Product> GetProducts()
         {
         return  _context.Product.ToList();
         }
 
        
 
-        public bool ProductExist(int? id)
-        {
-            return _context.Product.Any(x => x.Id == id);
-
-        }
 
         public bool Save()
         {

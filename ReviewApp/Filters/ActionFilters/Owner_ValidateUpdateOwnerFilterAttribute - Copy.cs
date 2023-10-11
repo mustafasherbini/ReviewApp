@@ -21,7 +21,7 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var OwnerID = context.ActionArguments["id"] as int?;
+            var OwnerID = context.ActionArguments["OwnerID"] as int?;
             var Ownerobject = context.ActionArguments["upowner"] as OwnerDTO;
 
             if (Ownerobject == null)

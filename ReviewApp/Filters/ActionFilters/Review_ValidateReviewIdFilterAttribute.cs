@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
+using ReviewApp.Data;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 
@@ -9,10 +11,14 @@ namespace ReviewApp.Filters.IActionFilters
     public class Review_ValidateReviewIdFilterAttribute : ActionFilterAttribute
     {
         IReviewRepository _ReviewRepository;
+        DataContext _dataContext;
 
-        public Review_ValidateReviewIdFilterAttribute(IReviewRepository reviewRepository)
+
+
+        public Review_ValidateReviewIdFilterAttribute(IReviewRepository reviewRepository , DataContext dataContext)
         {
             _ReviewRepository = reviewRepository;
+            _dataContext = dataContext;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -20,7 +26,7 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var ID = context.ActionArguments["ID"] as int?;
+            var ID = context.ActionArguments["ReviewID"] as int?;
           
                 if (ID <= 0)
                 {
@@ -33,7 +39,10 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_ReviewRepository.ReviewExists(ID))
+                else 
+                {
+                var review = _ReviewRepository.GetReview(ID);
+                if (review == null)
                 {
                     context.ModelState.AddModelError("ID", "Review doesn't exist");
 
@@ -42,7 +51,13 @@ namespace ReviewApp.Filters.IActionFilters
                         Status = StatusCodes.Status404NotFound
                     };
                     context.Result = new NotFoundObjectResult(problemDeatails);
+
                 }
+                else { context.HttpContext.Items["review"] = review;
+                    _dataContext.Entry(review).State = EntityState.Detached;
+
+                }
+            }
             
 
         }

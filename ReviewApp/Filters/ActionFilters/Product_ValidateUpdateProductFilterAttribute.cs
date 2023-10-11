@@ -21,7 +21,7 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var productID = context.ActionArguments["id"] as int?;
+            var productID = context.ActionArguments["ProductID"] as int?;
             var Productobject = context.ActionArguments["upproduct"] as ProductDTO;
 
             if (Productobject == null)

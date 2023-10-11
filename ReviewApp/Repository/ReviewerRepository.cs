@@ -24,7 +24,7 @@ namespace ReviewApp.Repository
             return Save();
         }
 
-        public Reviewer GetReviewerById(int id)
+        public Reviewer GetReviewerById(int? id)
         {
         return _context.Reviewers.Where(R=>R.Id==id).FirstOrDefault();
         }
@@ -45,10 +45,6 @@ namespace ReviewApp.Repository
         }
 
 
-        public bool ReviewerExist(int? ReviewerId)
-        {
-         return _context.Reviewers.Any(R=>R.Id == ReviewerId);   
-        }
 
         public bool Save()
         {

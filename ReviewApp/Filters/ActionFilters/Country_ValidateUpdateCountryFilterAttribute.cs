@@ -21,7 +21,7 @@ namespace ReviewApp.Filters.IActionFilters
             base.OnActionExecuting(context);
 
 
-            var CountryID = context.ActionArguments["id"] as int?;
+            var CountryID = context.ActionArguments["CountryID"] as int?;
             var Countryobject = context.ActionArguments["upcountry"] as CountryDTO;
 
             if (Countryobject == null)

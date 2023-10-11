@@ -25,9 +25,9 @@ namespace ReviewApp.Repository
             return Save();
         }
 
-        public Review GetReview(int id)
+        public Review GetReview(int? id)
         {
-            return _Context.Reviews.Where(R=>R.Id==id).SingleOrDefault();
+            return _Context.Reviews.Where(R=>R.Id==id).SingleOrDefault()!;
         }
 
         public ICollection<Review> GetReviews()
@@ -43,10 +43,7 @@ namespace ReviewApp.Repository
         }
 
 
-        public bool ReviewExists(int? id)
-        {
-            return _Context.Reviews.Any(R=>R.Id==id);
-        }
+      
 
         public bool Save()
         {

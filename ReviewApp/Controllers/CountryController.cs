@@ -38,21 +38,16 @@ namespace ReviewApp.Controllers
 
         public IActionResult GetCountry(int CountryID)
         {
-            var country = _countryRepository.GetCountry(CountryID);
-            var countryDTO = _mapper.Map<CountryDTO>(country);
+            var countryDTO = _mapper.Map<CountryDTO>((Country)HttpContext.Items["country"]!);
             return Ok(countryDTO);
         }
 
-        [HttpGet("exists/{CountryID}")]
-        [TypeFilter(typeof(Country_ValidateCountryIdFilterAttribute))]
-        public IActionResult CheckCountryExistence(int CountryID)
-        {
-            var exists = _countryRepository.CountryExist(CountryID);
-            return Ok(exists);
-        }
+     
 
 
         [HttpGet("owner/{OwnerID}")]
+        [TypeFilter(typeof(Owner_ValidateOwnerIdFilterAttribute))]
+
         public IActionResult GetCountryByOwner(int OwnerID)
         {
             var country = _countryRepository.GetCountryByOwner(OwnerID);

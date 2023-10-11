@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
+using ReviewApp.Data;
 using ReviewApp.Models;
 using ReviewApp.Repository;
 
@@ -9,10 +11,11 @@ namespace ReviewApp.Filters.IActionFilters
     public class Product_ValidateProductIdFilterAttribute : ActionFilterAttribute
     {
         IProductRepository _ProdectRepository;
-
-        public Product_ValidateProductIdFilterAttribute(IProductRepository ProdectRepository)
+        DataContext _dataContext;
+        public Product_ValidateProductIdFilterAttribute(IProductRepository ProdectRepository, DataContext dataContext)
         {
             _ProdectRepository = ProdectRepository;
+            _dataContext = dataContext;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -21,8 +24,7 @@ namespace ReviewApp.Filters.IActionFilters
 
 
             var ID = context.ActionArguments["ProductID"] as int?;
-            if (ID != null)
-            {
+           
                 if (ID <= 0)
                 {
 
@@ -34,17 +36,30 @@ namespace ReviewApp.Filters.IActionFilters
                     context.Result = new BadRequestObjectResult(problemDeatails);
 
                 }
-                else if (!_ProdectRepository.ProductExist(ID))
+                else
                 {
-                    context.ModelState.AddModelError("ID", "Prodect doesn't exist");
+                var product = _ProdectRepository.GetProduct(ID);
+                if (product == null)
+                {
+                    context.ModelState.AddModelError("ID", "Product doesn't exist");
 
                     var problemDeatails = new ValidationProblemDetails(context.ModelState)
                     {
                         Status = StatusCodes.Status404NotFound
                     };
                     context.Result = new NotFoundObjectResult(problemDeatails);
+
+
+                }
+                else
+                {
+                    context.HttpContext.Items["product"] = product;
+                    _dataContext.Entry(product).State = EntityState.Detached;
+
+
                 }
             }
+            
 
         }
     }

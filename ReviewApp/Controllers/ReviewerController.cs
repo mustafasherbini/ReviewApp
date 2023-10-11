@@ -33,19 +33,12 @@ namespace ReviewApp.Controllers
         [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
         public IActionResult GetReviewer(int ReviewerID)
         {
-            var reviewer = _reviewerRepository.GetReviewerById(ReviewerID);
-            var reviewerDTO = _mapper.Map<ReviewerDTO>(reviewer);
+           
+            var reviewerDTO = _mapper.Map<ReviewerDTO>(HttpContext.Items["reviwer"]);
             return Ok(reviewerDTO);
         }
 
-        [HttpGet("exists/{ReviewerID}")]
-        [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))]
-
-        public IActionResult ReviewerExist(int ReviewerID)
-        {
-            var exists = _reviewerRepository.ReviewerExist(ReviewerID);
-            return Ok(exists);
-        }
+ 
 
         [HttpGet("{ReviewerID}/reviews")]
         [TypeFilter(typeof(Reviewer_ValidateReviewerIdFilterAttribute))] 
@@ -78,11 +71,7 @@ namespace ReviewApp.Controllers
 
         public IActionResult UpdateReviewer(int ReviewerID, [FromBody] ReviewerDTO upReviewer)
         {
-            if (upReviewer == null) { return BadRequest(ModelState); }
-            if (ReviewerID != upReviewer.Id) return BadRequest(ModelState);
-            if (!_reviewerRepository.ReviewerExist(upReviewer.Id)) return NotFound();
-
-            if (!ModelState.IsValid) return BadRequest();
+     
             var ReviewerMap = _mapper.Map<Reviewer>(upReviewer);
 
             if (!_reviewerRepository.UpdateReviewer(ReviewerMap))

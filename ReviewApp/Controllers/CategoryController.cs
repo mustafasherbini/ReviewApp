@@ -17,11 +17,13 @@ namespace ReviewApp.Controllers
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
+        DataContext _dataContext;
 
-        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper )
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+         
         }
 
         [HttpGet("All")]
@@ -37,19 +39,11 @@ namespace ReviewApp.Controllers
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
         public IActionResult GetCategory(int CategoryID)
         {
-            var categoryDTO = _mapper.Map<CategoryDTO>(_categoryRepository.GetCategoryById(CategoryID));
+            var categoryDTO = _mapper.Map<CategoryDTO>(HttpContext.Items["category"]);
+        
             return Ok(categoryDTO);
         }
 
-
-
-        [HttpGet("exists/{CategoryID}")]
-        [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
-        public IActionResult CheckCategoryExistence(int CategoryID)
-        {
-            var exists = _categoryRepository.DoesCategoryExist(CategoryID);
-            return Ok(exists);
-        }
 
 
 
@@ -77,7 +71,7 @@ namespace ReviewApp.Controllers
 
 
 
-        [HttpPut(("{CategoryID}"))]
+        [HttpPut(("{CategoryID}"))] 
 
         [TypeFilter(typeof(Category_ValidateCategoryIdFilterAttribute))]
         [TypeFilter(typeof(Category_ValidateUpdateCategoryFilterAttribute))]
@@ -85,7 +79,7 @@ namespace ReviewApp.Controllers
         {
      
             var categoryMap = _mapper.Map<Category>(upcategory);
-
+                
             if (!_categoryRepository.UpdateCategory(categoryMap))
             {
                 ModelState.AddModelError("", "Something went wrong while Updating");
@@ -104,7 +98,7 @@ namespace ReviewApp.Controllers
         public IActionResult DeleteCategory(int CategoryID)
         {
 
-            var categoryToDelete = _categoryRepository.GetCategoryById(CategoryID);
+            var categoryToDelete = (Category)HttpContext.Items["category"];
             _categoryRepository.DeleteCategory(categoryToDelete);  
 
          return   Ok();
